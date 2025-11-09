@@ -1,6 +1,6 @@
 // Report-related types
 
-export type ReportStatus = 'pending' | 'in_progress' | 'resolved' | 'rejected';
+export type ReportStatus = 'pending' | 'in-progress' | 'resolved' | 'rejected';
 
 export type ReportCategory = 'infrastruktur' | 'kebersihan' | 'keamanan' | 'kesehatan' | 'lainnya';
 
@@ -13,11 +13,14 @@ export interface Report {
   province: string;
   city: string;
   address: string;
+  location: string; // Short location name for display
   latitude: number;
   longitude: number;
   images: string[];
   upvotes: number;
   userId: string;
+  reporterName: string; // User's display name
+  reporterAvatar: string; // User's avatar URL
   createdAt: string;
   updatedAt: string;
 }

@@ -1,75 +1,121 @@
-import Link from 'next/link';
-import Logo from './Logo';
+import { Facebook, Twitter, Instagram, Heart } from "lucide-react";
+import { Logo } from "./Logo";
 
-export default function Footer() {
+export function Footer() {
   return (
-    <footer className="border-t border-dark-brown/10 bg-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-4">
-          <div>
-            <div className="mb-4 flex items-center gap-2">
-              <Logo />
-              <span className="text-xl font-bold text-dark-brown">LaporWarga</span>
+    <footer className="relative overflow-hidden bg-[#f5f3ea]">
+      {/* Main Footer Card */}
+      <div className="relative max-w-6xl mx-auto px-4 pt-20 pb-12">
+        {/* Decorative Corner Elements */}
+        <div className="absolute top-16 left-0 w-20 h-20 border-l-4 border-t-4 border-[#FACC15] opacity-30" />
+        <div className="absolute bottom-8 right-0 w-20 h-20 border-r-4 border-b-4 border-[#FACC15] opacity-30" />
+
+        {/* Content Grid */}
+        <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-8 sm:p-12 border border-[#eae6d4] shadow-xl relative overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+            {/* Left: Logo & Tagline */}
+            <div className="flex flex-col items-center md:items-start gap-6">
+              <div className="bg-[#2c2c21] rounded-2xl px-6 py-4 shadow-md border border-[#2c2c21]">
+                <Logo height={56} />
+              </div>
+              <div className="space-y-3">
+                <p className="text-[#342e19] inter-semibold text-center md:text-left">
+                  Suara Rakyat, Aksi Nyata
+                </p>
+                <p className="text-[#8a7b42] text-sm text-center md:text-left max-w-xs">
+                  Platform pelaporan warga real-time se-Indonesia
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-dark-brown/70">
-              Platform pelaporan warga untuk Indonesia yang lebih baik
-            </p>
-          </div>
 
-          <div>
-            <h3 className="mb-4 font-semibold text-dark-brown">Navigasi</h3>
-            <ul className="space-y-2 text-sm text-dark-brown/70">
-              <li>
-                <Link href="/feed" className="hover:text-primary-yellow">
-                  Semua Laporan
-                </Link>
-              </li>
-              <li>
-                <Link href="/leaderboard" className="hover:text-primary-yellow">
+            {/* Right: Quick Links & Social */}
+            <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start md:justify-end">
+              {/* Quick Navigation */}
+              <div className="flex flex-col items-center md:items-start gap-3">
+                <h4 className="text-[#342e19] inter-semibold mb-2">Navigasi</h4>
+                <a
+                  href="#hero"
+                  className="text-[#8a7b42] hover:text-[#FACC15] transition-colors text-sm cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .getElementById("hero")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  Beranda
+                </a>
+                <a
+                  href="#stats"
+                  className="text-[#8a7b42] hover:text-[#FACC15] transition-colors text-sm cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .getElementById("stats")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  Statistik
+                </a>
+                <a
+                  href="#leaderboard"
+                  className="text-[#8a7b42] hover:text-[#FACC15] transition-colors text-sm cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .getElementById("leaderboard")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
                   Leaderboard
-                </Link>
-              </li>
-              <li>
-                <Link href="/reports/create" className="hover:text-primary-yellow">
-                  Buat Laporan
-                </Link>
-              </li>
-            </ul>
+                </a>
+              </div>
+
+              {/* Social Media */}
+              <div className="flex flex-col items-center md:items-start gap-3">
+                <h4 className="text-[#342e19] inter-semibold mb-2">
+                  Ikuti Kami
+                </h4>
+                <div className="flex items-center gap-3">
+                  <a
+                    href="#"
+                    className="w-10 h-10 rounded-xl bg-[#FACC15]/20 hover:bg-[#FACC15] flex items-center justify-center text-[#342e19] transition-all duration-300 hover:scale-110 hover:rotate-6 cursor-pointer"
+                  >
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="#"
+                    className="w-10 h-10 rounded-xl bg-[#FACC15]/20 hover:bg-[#FACC15] flex items-center justify-center text-[#342e19] transition-all duration-300 hover:scale-110 hover:rotate-6 cursor-pointer"
+                  >
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="#"
+                    className="w-10 h-10 rounded-xl bg-[#FACC15]/20 hover:bg-[#FACC15] flex items-center justify-center text-[#342e19] transition-all duration-300 hover:scale-110 hover:rotate-6 cursor-pointer"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <h3 className="mb-4 font-semibold text-dark-brown">Tentang</h3>
-            <ul className="space-y-2 text-sm text-dark-brown/70">
-              <li>
-                <Link href="/about" className="hover:text-primary-yellow">
-                  Tentang Kami
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-primary-yellow">
-                  Kebijakan Privasi
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-primary-yellow">
-                  Syarat & Ketentuan
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Bottom Bar */}
+          <div className="relative pt-8">
+            {/* Divider Line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#FACC15]/30" />
 
-          <div>
-            <h3 className="mb-4 font-semibold text-dark-brown">Kontak</h3>
-            <ul className="space-y-2 text-sm text-dark-brown/70">
-              <li>Email: info@laporwarga.id</li>
-              <li>Twitter: @laporwarga</li>
-              <li>Instagram: @laporwarga</li>
-            </ul>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-[#b4a464] text-xs sm:text-sm">
+                © 2024 LaporWarga. Semua hak dilindungi.
+              </p>
+              <p className="text-[#b4a464] text-xs sm:text-sm flex items-center gap-1.5">
+                Dibuat dengan
+                <Heart className="w-3.5 h-3.5 text-[#fa1515] fill-[#fa1515] animate-pulse" />
+                untuk Indonesia
+              </p>
+            </div>
           </div>
-        </div>
-
-        <div className="mt-8 border-t border-dark-brown/10 pt-8 text-center text-sm text-dark-brown/70">
-          © 2024 LaporWarga. All rights reserved.
         </div>
       </div>
     </footer>
