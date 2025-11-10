@@ -48,3 +48,7 @@ STRUCTURE.md
 
 # lock files
 package-lock.json
+
+
+# claude AI assistant
+.claude/
