@@ -17,6 +17,9 @@ import {
   defaultMapCenter,
   defaultMapZoom,
 } from '@/lib/google-maps/client';
+import StatusBadge from '@/components/shared/StatusBadge';
+import { calculateBounds } from '@/lib/google-maps/utils';
+
 
 // Ambil warna dari file constants Anda
 const categoryColors: Record<string, string> = CATEGORIES.reduce(
@@ -53,6 +56,7 @@ interface InteractiveMapProps {
 }
 
 // Komponen Peta Internal untuk mengakses hook useMap()
+// Komponen Peta Internal untuk mengakses hook useMap()
 function MapView({
   reports,
   hoveredReportId,
@@ -63,33 +67,59 @@ function MapView({
 }: InteractiveMapProps & { viewMode: 'pin' | 'heatmap' }) {
   const map = useMap();
   const selectedReport = reports.find((r) => r.id === selectedReportId);
-
-  // LOGIKA AUTO-FOKUS
   useEffect(() => {
-    if (map && reports.length > 0) {
-      const cities = Array.from(new Set(reports.map((r) => r.city)));
+    // Keluar jika map belum siap atau tidak ada laporan untuk ditampilkan
+    if (!map || !reports) return;
 
-      if (cities.length === 1) {
-        // Jika hanya satu kota yang difilter, zoom ke sana
-        const city = cities[0];
-        const centerCoords = cityCenterCoordinates[city];
-        if (centerCoords) {
-          map.panTo(centerCoords);
-          map.setZoom(13); // Zoom Google Maps yang lebih realistis
-        }
+    const points = reports.map((r) => ({
+      lat: r.latitude,
+      lng: r.longitude,
+    }));
+
+    if (points.length === 1) {
+      // Kasus 1: Hanya ada 1 hasil pencarian
+      // Langsung zoom ke titik spesifik tersebut
+      map.panTo(points[0]);
+      map.setZoom(15); // Zoom lebih dekat untuk 1 laporan
+    } else if (points.length > 1) {
+      // Kasus 2: Ada BANYAK (2+) hasil pencarian
+      // Hitung batas (bounds) untuk semua titik
+      const bounds = calculateBounds(points); //
+      if (bounds && google.maps) {
+        // Buat objek Google Maps LatLngBounds
+        const googleBounds = new google.maps.LatLngBounds(
+          { lat: bounds.south, lng: bounds.west }, // Titik southwest
+          { lat: bounds.north, lng: bounds.east } // Titik northeast
+        );
+
+        // Perintahkan peta untuk menyesuaikan zoom agar semua titik terlihat
+        map.fitBounds(googleBounds, 100); // 100 adalah padding (opsional)
       }
     }
-  }, [map, reports]);
+    // Jika points.length === 0 (tidak ada hasil),
+    // kita tidak melakukan apa-apa, biarkan peta di posisi terakhirnya.
+  }, [map, reports]); // Bergantung pada map dan 'reports' (filteredMapReports)
+  // --- AKHIR DARI PERUBAHAN ---
 
-  // Handler untuk mengklik pin
+  // Efek untuk pan/zoom saat SATU report dipilih (biarkan)
+  useEffect(() => {
+    if (selectedReport && map) {
+      map.panTo({
+        lat: selectedReport.latitude,
+        lng: selectedReport.longitude,
+      });
+      map.setZoom(15);
+    }
+  }, [selectedReport, map]);
+
+  // Handler untuk mengklik pin (biarkan)
   const handleMarkerClick = (report: Report) => {
     onReportClick(report.id);
-    map?.panTo({ lat: report.latitude, lng: report.longitude });
-    map?.setZoom(15);
   };
 
   return (
     <>
+      {/* ... (Sisa kode <AdvancedMarker> dan <InfoWindow> biarkan saja) ... */}
       {/* Render Pin Laporan */}
       {viewMode === 'pin' &&
         reports.map((report) => (
@@ -97,19 +127,22 @@ function MapView({
             key={report.id}
             position={{ lat: report.latitude, lng: report.longitude }}
             onClick={() => handleMarkerClick(report)}
-            // onMouseOver={() => onReportHover(report.id)}   // <-- PERBAIKAN 1
-            // onMouseOut={() => onReportHover(null)}    // <-- PERBAIKAN 2
           >
-            <Pin
-              background={
-                categoryColors[report.category] || categoryColors.lainnya
-              }
-              borderColor={
-                categoryColors[report.category] || categoryColors.lainnya
-              }
-              glyphColor={'#100d00'} // Sesuai --primary-content
-              scale={hoveredReportId === report.id ? 1.2 : 1.0} // Membesar saat di-hover
-            />
+            <div
+              onMouseOver={() => onReportHover(report.id)}
+              onMouseOut={() => onReportHover(null)}
+            >
+              <Pin
+                background={
+                  categoryColors[report.category] || categoryColors.lainnya
+                }
+                borderColor={
+                  categoryColors[report.category] || categoryColors.lainnya
+                }
+                glyphColor={'#100d00'}
+                scale={hoveredReportId === report.id ? 1.2 : 1.0}
+              />
+            </div>
           </AdvancedMarker>
         ))}
 
@@ -120,11 +153,10 @@ function MapView({
             lat: selectedReport.latitude,
             lng: selectedReport.longitude,
           }}
-          pixelOffset={[0, -40]} // Geser ke atas pin
+          pixelOffset={[0, -40]}
           onCloseClick={() => onReportClick(null)}
         >
-          {/* Menggunakan UI Card yang sama dari peta palsu Anda */}
-          <div className="w-64 rounded-lg bg-card p-0">
+          <div className="w-80 rounded-lg bg-card p-0">
             {selectedReport.images && selectedReport.images[0] && (
               <img
                 src={selectedReport.images[0]}
@@ -154,22 +186,24 @@ function MapView({
                       categoryColors[selectedReport.category] ||
                       categoryColors.lainnya,
                     color:
-                      categoryColors[selectedReport.category] ||
+                      // VVV INI PERBAIKANNYA VVV
+                      categoryColors[selectedReport.category] || // Diubah dari selectedGmaps.report.category
+                      // ^^^ INI PERBAIKANNYA ^^^
                       categoryColors.lainnya,
                   }}
                 >
                   {selectedReport.category}
                 </Badge>
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {selectedReport.status}
-                </span>
+                <div className="ml-auto">
+                  <StatusBadge status={selectedReport.status} />
+                </div>
               </div>
             </div>
           </div>
         </InfoWindow>
       )}
 
-      {/* TODO: Implementasi Heatmap (membutuhkan library `google.maps.visualization`) */}
+      {/* TODO: Implementasi Heatmap (biarkan) */}
     </>
   );
 }
@@ -264,9 +298,18 @@ export function InteractiveMap(props: InteractiveMapProps) {
         disableDefaultUI={true}
         onClick={() => props.onReportClick(null)} // Klik di peta = tutup InfoWindow
       >
+        {/* Render Peta dan Pin */}
         <MapView {...props} viewMode={viewMode} />
+
+        {/* VVV INI PERBAIKANNYA VVV
+          Pindahkan MapControls ke DALAM komponen <Map>
+        */}
+        <MapControls viewMode={viewMode} onViewModeChange={setViewMode} />
+        {/* ^^^ AKHIR PERBAIKAN ^^^ */}
+
       </Map>
-      <MapControls viewMode={viewMode} onViewModeChange={setViewMode} />
+      
+      {/* HAPUS DARI SINI: <MapControls viewMode={viewMode} onViewModeChange={setViewMode} /> */}
     </div>
   );
 }
