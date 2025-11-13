@@ -1,13 +1,17 @@
 import { Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Logo } from "@/components/shared/Logo";
+import { UserDropdownMenu } from "@/components/shared/UserDropdownMenu";
+import type { User as UserType } from "@/types/user";
 
 interface MapNavbarProps {
   isLoggedIn: boolean;
   onCreateReport: () => void;
   onNavigateToAuth: () => void;
   onNavigateToLanding: () => void;
+  currentUser?: UserType & { stats: { totalReports: number; resolvedReports: number; totalUpvotes: number } };
+  onLogout?: () => void;
+  showUserDetails?: boolean; // Show name and reports count in avatar dropdown
 }
 
 export function MapNavbar({
@@ -15,6 +19,9 @@ export function MapNavbar({
   onCreateReport,
   onNavigateToAuth,
   onNavigateToLanding,
+  currentUser,
+  onLogout,
+  showUserDetails = true,
 }: MapNavbarProps) {
   return (
     <nav className="bg-neutral-950/95 backdrop-blur-lg border-b border-white/10 px-4 lg:px-6 py-3 shadow-lg sticky top-0 z-50">
@@ -37,12 +44,8 @@ export function MapNavbar({
             <span className="hidden lg:inline">Buat Laporan</span>
           </Button>
 
-          {isLoggedIn ? (
-            <Avatar className="cursor-pointer h-9 w-9 ring-2 ring-[#FACC15]/20 hover:ring-[#FACC15]/40 transition-all">
-              <AvatarFallback className="bg-[#35750f] text-white">
-                U
-              </AvatarFallback>
-            </Avatar>
+          {isLoggedIn && currentUser ? (
+            <UserDropdownMenu user={currentUser} onLogout={onLogout} showDetails={showUserDetails} />
           ) : (
             <Button
               onClick={onNavigateToAuth}
