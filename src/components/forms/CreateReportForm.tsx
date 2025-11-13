@@ -34,9 +34,9 @@ export default function CreateReportForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-6 shadow-sm">
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-dark-brown">
+    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 rounded-lg bg-white p-4 sm:p-6 shadow-sm">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="title" className="block text-xs sm:text-sm font-semibold text-dark-brown">
           Judul Laporan
         </label>
         <input
@@ -44,21 +44,21 @@ export default function CreateReportForm() {
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white placeholder:text-sm"
           placeholder="Contoh: Jalan rusak di depan pasar"
           required
         />
       </div>
 
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-dark-brown">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="category" className="block text-xs sm:text-sm font-semibold text-dark-brown">
           Kategori
         </label>
         <select
           id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white"
           required
         >
           <option value="">Pilih Kategori</option>
@@ -70,31 +70,31 @@ export default function CreateReportForm() {
         </select>
       </div>
 
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-dark-brown">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="description" className="block text-xs sm:text-sm font-semibold text-dark-brown">
           Deskripsi
         </label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={5}
-          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+          rows={4}
+          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white placeholder:text-sm"
           placeholder="Jelaskan masalah yang Anda temukan..."
           required
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label htmlFor="province" className="block text-sm font-medium text-dark-brown">
+      <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+        <div className="space-y-1.5 sm:space-y-2">
+          <label htmlFor="province" className="block text-xs sm:text-sm font-semibold text-dark-brown">
             Provinsi
           </label>
           <select
             id="province"
             value={province}
             onChange={(e) => setProvince(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+            className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white"
             required
           >
             <option value="">Pilih Provinsi</option>
@@ -102,15 +102,15 @@ export default function CreateReportForm() {
           </select>
         </div>
 
-        <div>
-          <label htmlFor="city" className="block text-sm font-medium text-dark-brown">
+        <div className="space-y-1.5 sm:space-y-2">
+          <label htmlFor="city" className="block text-xs sm:text-sm font-semibold text-dark-brown">
             Kota/Kabupaten
           </label>
           <select
             id="city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+            className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white"
             required
             disabled={!province}
           >
@@ -120,8 +120,8 @@ export default function CreateReportForm() {
         </div>
       </div>
 
-      <div>
-        <label htmlFor="address" className="block text-sm font-medium text-dark-brown">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="address" className="block text-xs sm:text-sm font-semibold text-dark-brown">
           Alamat Detail
         </label>
         <input
@@ -129,7 +129,7 @@ export default function CreateReportForm() {
           id="address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-4 py-2 text-dark-brown"
+          className="mt-1 w-full rounded-lg border border-dark-brown/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-dark-brown bg-white placeholder:text-sm"
           placeholder="Jalan, nomor, atau landmark"
           required
         />
@@ -137,18 +137,18 @@ export default function CreateReportForm() {
 
       <ImageUploadField images={images} setImages={setImages} />
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 rounded-lg bg-primary-yellow py-3 font-semibold text-dark-brown transition hover:bg-primary-yellow/90 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-primary-yellow py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-dark-brown transition hover:bg-primary-yellow/90 disabled:opacity-50"
         >
           {loading ? 'Mengirim...' : 'Kirim Laporan'}
         </button>
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="rounded-lg border border-dark-brown/20 px-6 py-3 text-dark-brown transition hover:bg-cream"
+          className="rounded-lg border border-dark-brown/20 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-dark-brown transition hover:bg-cream"
         >
           Batal
         </button>

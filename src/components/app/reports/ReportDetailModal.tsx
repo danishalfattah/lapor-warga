@@ -132,7 +132,7 @@ export function ReportDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1 scrollbar-hide">
           <div className="p-6">
             {/* Header */}
             <div className="mb-4">
@@ -215,16 +215,6 @@ export function ReportDetailModal({
                 />
                 <span className="font-semibold">{report.upvotes}</span>
                 <span className="ml-2">Upvote</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleShare}
-                className="h-12 px-6"
-              >
-                <Share2 className="w-5 h-5 mr-2" />
-                Bagikan
               </Button>
             </div>
           </div>
