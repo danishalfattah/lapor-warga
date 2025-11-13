@@ -49,8 +49,8 @@ export function Statistics() {
     const baseMultiplier = selectedProvince === "all" ? 3000 : 800;
     const totalReports = filteredReports.length * baseMultiplier;
 
-    const inProgressCount = filteredReports.filter(
-      (r) => r.status === "in-progress"
+    const pendingCount = filteredReports.filter(
+      (r) => r.status === "pending"
     ).length;
     const resolvedCount = filteredReports.filter(
       (r) => r.status === "resolved"
@@ -58,7 +58,7 @@ export function Statistics() {
 
     // Calculate proportionally
     const inProgress = Math.floor(
-      totalReports * (inProgressCount / filteredReports.length)
+      totalReports * (pendingCount / filteredReports.length)
     );
     const resolved = Math.floor(
       totalReports * (resolvedCount / filteredReports.length)
