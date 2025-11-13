@@ -18,7 +18,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Report } from "@/types/report";
-import Image from "next/image";
 
 interface CreateReportDialogProps {
   open: boolean;
@@ -99,6 +98,12 @@ export function CreateReportDialog({
 
   const removeImage = (index: number) => {
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Reset city when province changes
+  const handleProvinceChange = (value: string) => {
+    setProvince(value);
+    setCity(""); // Reset city selection
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -225,7 +230,7 @@ export function CreateReportDialog({
               >
                 Provinsi
               </Label>
-              <Select value={province} onValueChange={setProvince}>
+              <Select value={province} onValueChange={handleProvinceChange}>
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Pilih provinsi" />
                 </SelectTrigger>
@@ -246,14 +251,22 @@ export function CreateReportDialog({
               >
                 Kota/Kabupaten
               </Label>
-              <Input
-                id="city"
-                placeholder="Contoh: Jakarta Selatan"
+              <Select
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="bg-white"
-                required
-              />
+                onValueChange={setCity}
+                disabled={!province || availableCities.length === 0}
+              >
+                <SelectTrigger className="bg-white">
+                  <SelectValue placeholder={!province ? "Pilih provinsi dulu" : "Pilih kota"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCities.map((cityName) => (
+                    <SelectItem key={cityName} value={cityName}>
+                      {cityName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
