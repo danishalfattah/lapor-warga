@@ -39,6 +39,7 @@ interface InteractiveMapProps {
   onSearchChange?: (value: string) => void;
   upvotedReportIds?: string[];
   isLoading?: boolean;
+  onOpenDetail?: () => void;
 }
 
 function MapView({
@@ -50,14 +51,19 @@ function MapView({
   onUpvote,
   isLoggedIn,
   upvotedReportIds = [],
+  onOpenDetail,
   viewMode,
 }: InteractiveMapProps & { viewMode: "pin" | "heatmap" }) {
   const map = useMap();
-  const prevReportIdsRef = useRef<string>('');
+  const prevReportIdsRef = useRef<string>("");
 
   // Memoized report IDs untuk detect changes in actual report list
   const reportIds = useMemo(
-    () => reports.map(r => r.id).sort().join(','),
+    () =>
+      reports
+        .map((r) => r.id)
+        .sort()
+        .join(","),
     [reports]
   );
 
@@ -215,11 +221,14 @@ function MapView({
               <div className="mb-2 flex items-center gap-1.5">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
                 <p className="text-xs text-muted-foreground">
-                  {new Date(selectedReport.createdAt).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {new Date(selectedReport.createdAt).toLocaleDateString(
+                    "id-ID",
+                    {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }
+                  )}
                 </p>
               </div>
 
@@ -249,10 +258,14 @@ function MapView({
                 >
                   <ArrowBigUp
                     className={`w-4 h-4 mr-1 transition-all ${
-                      upvotedReportIds.includes(selectedReport.id) && isLoggedIn ? "fill-[#FACC15]" : ""
+                      upvotedReportIds.includes(selectedReport.id) && isLoggedIn
+                        ? "fill-[#FACC15]"
+                        : ""
                     }`}
                   />
-                  <span className="inter-semibold text-sm">{selectedReport.upvotes}</span>
+                  <span className="inter-semibold text-sm">
+                    {selectedReport.upvotes}
+                  </span>
                 </Button>
 
                 <Badge
@@ -273,6 +286,22 @@ function MapView({
                   <StatusBadge status={selectedReport.status} />
                 </div>
               </div>
+
+              {/* Lihat Detail Button */}
+              {onOpenDetail && (
+                <div className="mt-3">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenDetail();
+                    }}
+                    className="cursor-pointer w-full bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#2c2c21] font-semibold"
+                    size="sm"
+                  >
+                    Lihat Detail
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </InfoWindow>

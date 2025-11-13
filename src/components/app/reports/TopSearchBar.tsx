@@ -10,7 +10,7 @@ interface TopSearchBarProps {
 export function TopSearchBar({
   value,
   onChange,
-  placeholder = "Cari laporan...",
+  placeholder = "Cari laporan atau lokasi...",
 }: TopSearchBarProps) {
   return (
     <div className="w-full px-4 py-3 md:hidden">
