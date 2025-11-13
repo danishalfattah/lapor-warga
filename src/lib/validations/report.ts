@@ -13,8 +13,7 @@ export const createReportSchema = z.object({
     .max(1000, "Deskripsi maksimal 1000 karakter"),
 
   category: z.enum(["infrastruktur", "kebersihan", "keamanan", "kesehatan", "lainnya"], {
-    required_error: "Kategori harus dipilih",
-    invalid_type_error: "Kategori tidak valid",
+    message: "Kategori harus dipilih",
   }),
 
   address: z
@@ -29,16 +28,14 @@ export const createReportSchema = z.object({
 
   latitude: z
     .number({
-      required_error: "Koordinat latitude diperlukan",
-      invalid_type_error: "Latitude harus berupa angka",
+      message: "Latitude harus berupa angka",
     })
     .min(-90, "Latitude harus antara -90 dan 90")
     .max(90, "Latitude harus antara -90 dan 90"),
 
   longitude: z
     .number({
-      required_error: "Koordinat longitude diperlukan",
-      invalid_type_error: "Longitude harus berupa angka",
+      message: "Longitude harus berupa angka",
     })
     .min(-180, "Longitude harus antara -180 dan 180")
     .max(180, "Longitude harus antara -180 dan 180"),
