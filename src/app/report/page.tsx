@@ -10,6 +10,7 @@ import { MobileReportList } from "@/components/app/reports/MobileReportList";
 import { CreateReportDialog } from "@/components/app/reports/CreateReportDialog";
 import { ReportDetailModal } from "@/components/app/reports/ReportDetailModal";
 import { mockReports } from "@/lib/mockData";
+import { mockCurrentUser } from "@/data/mockUsers";
 import type { Report, ReportCategory, ReportStatus } from "@/types/report";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -44,6 +45,7 @@ export default function ReportPage() {
 
   // Mock authentication - always logged in
   const isLoggedIn = true;
+  const currentUser = mockCurrentUser;
 
   // Simulate initial loading
   useEffect(() => {
@@ -154,6 +156,9 @@ export default function ReportPage() {
           onCreateReport={handleCreateReport}
           onNavigateToAuth={() => router.push("/login")}
           onNavigateToLanding={() => router.push("/")}
+          currentUser={currentUser}
+          onLogout={() => router.push("/login")}
+          showUserDetails={false}
         />
 
         {/* Main Content */}
