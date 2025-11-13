@@ -65,7 +65,7 @@ export function ReportDetailModal({
           text: report.description,
           url: window.location.href,
         });
-      } catch (error) {
+      } catch {
         console.log("Share cancelled");
       }
     } else {
@@ -77,64 +77,62 @@ export function ReportDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-        <div className="relative">
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-20 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
-            aria-label="Tutup"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <DialogContent className="max-w-[calc(100%-3rem)] sm:max-w-[calc(100%-4rem)] md:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-hidden p-0 rounded-xl sm:rounded-2xl shadow-2xl border-2 border-white/20 flex flex-col">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+          aria-label="Tutup"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-          {/* Image Gallery */}
-          <div className="relative h-80 bg-gray-900">
-            <ImageWithFallback
-              src={images[currentImageIndex]}
-              alt={report.title}
-              className="w-full h-full object-cover"
-            />
+        {/* Image Gallery - Fixed */}
+        <div className="relative h-80 bg-gray-900 flex-shrink-0">
+          <ImageWithFallback
+            src={images[currentImageIndex]}
+            alt={report.title}
+            className="w-full h-full object-cover"
+          />
 
-            {/* Image Navigation */}
-            {images.length > 1 && (
-              <>
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
-                  aria-label="Gambar sebelumnya"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
-                  aria-label="Gambar berikutnya"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {images.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentImageIndex
-                          ? "bg-white"
-                          : "bg-white/50"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
+          {/* Image Navigation */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={handlePrevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+                aria-label="Gambar sebelumnya"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleNextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+                aria-label="Gambar berikutnya"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      index === currentImageIndex ? "bg-white" : "bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
-            {/* Status Badge Overlay */}
-            <div className="absolute top-4 left-4 z-10">
-              <StatusBadge status={report.status} />
-            </div>
+          {/* Status Badge Overlay */}
+          <div className="absolute top-4 left-4 z-10">
+            <StatusBadge status={report.status} />
           </div>
+        </div>
 
-          {/* Content */}
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto flex-1">
           <div className="p-6">
             {/* Header */}
             <div className="mb-4">
@@ -202,7 +200,7 @@ export function ReportDetailModal({
                 variant="ghost"
                 size="lg"
                 onClick={() => onUpvote(report.id)}
-                className={`h-12 px-6 transition-all ${
+                className={`cursor-pointer h-12 px-6 transition-all ${
                   !isLoggedIn
                     ? "text-gray-400 cursor-not-allowed"
                     : isUpvoted
