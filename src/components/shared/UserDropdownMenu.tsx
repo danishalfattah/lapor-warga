@@ -19,7 +19,11 @@ interface UserDropdownMenuProps {
   showDetails?: boolean; // Show name and reports count in trigger button
 }
 
-export function UserDropdownMenu({ user, onLogout, showDetails = true }: UserDropdownMenuProps) {
+export function UserDropdownMenu({
+  user,
+  onLogout,
+  showDetails = true,
+}: UserDropdownMenuProps) {
   const router = useRouter();
 
   const handleNavigateToProfile = () => {
@@ -45,7 +49,9 @@ export function UserDropdownMenu({ user, onLogout, showDetails = true }: UserDro
           <UserAvatar name={user.name} size="sm" />
           {showDetails && (
             <div className="hidden md:block text-left">
-              <p className="text-sm font-semibold text-[#2c2c21]">{user.name}</p>
+              <p className="text-sm font-semibold text-[#2c2c21]">
+                {user.name}
+              </p>
               <p className="text-xs text-gray-500">
                 {user.stats.totalReports} laporan
               </p>
@@ -72,11 +78,6 @@ export function UserDropdownMenu({ user, onLogout, showDetails = true }: UserDro
         >
           <User className="mr-2 h-4 w-4" />
           <span>Profil Saya</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className="cursor-pointer" disabled>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Pengaturan</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

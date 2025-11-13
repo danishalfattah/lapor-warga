@@ -9,7 +9,13 @@ interface MapNavbarProps {
   onCreateReport: () => void;
   onNavigateToAuth: () => void;
   onNavigateToLanding: () => void;
-  currentUser?: UserType & { stats: { totalReports: number; resolvedReports: number; totalUpvotes: number } };
+  currentUser?: UserType & {
+    stats: {
+      totalReports: number;
+      resolvedReports: number;
+      totalUpvotes: number;
+    };
+  };
   onLogout?: () => void;
   showUserDetails?: boolean; // Show name and reports count in avatar dropdown
 }
@@ -25,7 +31,7 @@ export function MapNavbar({
 }: MapNavbarProps) {
   return (
     <nav className="bg-neutral-950/95 backdrop-blur-lg border-b border-white/10 px-4 lg:px-6 py-3 shadow-lg sticky top-0 z-50">
-      <div className="flex items-center justify-between gap-4 max-w-[2000px] mx-auto">
+      <div className="flex items-center justify-between gap-4 mx-auto ">
         {/* Logo */}
         <button
           onClick={onNavigateToLanding}
@@ -35,7 +41,7 @@ export function MapNavbar({
         </button>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
+        <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
           <Button
             onClick={onCreateReport}
             className="bg-[#FACC15] text-[#2c2c21] hover:bg-[#FACC15]/90 shadow-sm h-9 cursor-pointer transition-all"
@@ -45,7 +51,11 @@ export function MapNavbar({
           </Button>
 
           {isLoggedIn && currentUser ? (
-            <UserDropdownMenu user={currentUser} onLogout={onLogout} showDetails={showUserDetails} />
+            <UserDropdownMenu
+              user={currentUser}
+              onLogout={onLogout}
+              showDetails={showUserDetails}
+            />
           ) : (
             <Button
               onClick={onNavigateToAuth}
