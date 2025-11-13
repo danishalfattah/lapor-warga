@@ -95,7 +95,12 @@ export default function ReportPage() {
   const handleReportSelect = (reportId: string | null) => {
     const report = reports.find((r) => r.id === reportId);
     setSelectedReport(report || null);
-    if (report) {
+    // Card click hanya pan ke pin, tidak buka modal
+  };
+
+  const handleOpenDetailModal = () => {
+    // Buka modal dari InfoWindow
+    if (selectedReport) {
       setShowDetailModal(true);
     }
   };
@@ -185,6 +190,7 @@ export default function ReportPage() {
                   isLoggedIn={isLoggedIn}
                   upvotedReportIds={upvotedReportIds}
                   isLoading={isLoading}
+                  onOpenDetail={handleOpenDetailModal}
                 />
               </ErrorBoundary>
             </div>
@@ -220,6 +226,7 @@ export default function ReportPage() {
                   isLoggedIn={isLoggedIn}
                   upvotedReportIds={upvotedReportIds}
                   isLoading={isLoading}
+                  onOpenDetail={handleOpenDetailModal}
                 />
               </ErrorBoundary>
             </div>
@@ -244,6 +251,7 @@ export default function ReportPage() {
                   isLoggedIn={isLoggedIn}
                   upvotedReportIds={upvotedReportIds}
                   isLoading={isLoading}
+                  onOpenDetail={handleOpenDetailModal}
                 />
               </ErrorBoundary>
             </div>
