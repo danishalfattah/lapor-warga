@@ -36,9 +36,12 @@ export function GlassNavbar({
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <Logo isDark={true} height={60} />
-        </div>
+        </button>
 
         {/* Desktop Buttons */}
         <div className="hidden items-center gap-3 sm:flex">

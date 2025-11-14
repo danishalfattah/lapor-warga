@@ -11,7 +11,10 @@ import UserReports from "@/components/app/profile/UserReports";
 import { ProfileTabs } from "@/components/app/profile/ProfileTabs";
 import { EditProfileDialog } from "@/components/app/profile/EditProfileDialog";
 import { CreateReportDialog } from "@/components/app/reports/CreateReportDialog";
+import { EditReportDialog } from "@/components/app/reports/EditReportDialog";
 import { ReportDetailModal } from "@/components/app/reports/ReportDetailModal";
+import { StatusFilter } from "@/components/app/profile/StatusFilter";
+import { DeleteConfirmDialog } from "@/components/app/profile/DeleteConfirmDialog";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { mockCurrentUser } from "@/data/mockUsers";
 import { mockReports } from "@/lib/mockData";
@@ -30,6 +33,13 @@ export default function ProfilePage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [userData, setUserData] = useState(mockCurrentUser);
+
+  // New states for Edit/Delete/Filter features
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "resolved">("all");
+  const [showEditReportDialog, setShowEditReportDialog] = useState(false);
+  const [reportToEdit, setReportToEdit] = useState<Report | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
 
   // Persistent upvote state
   const [upvotedReportIds, setUpvotedReportIds] = useLocalStorage<string[]>(
@@ -61,10 +71,13 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
   }, [userData.id]);
 
-  // Get reports based on active tab
+  // Get reports based on active tab and status filter
   const displayedReports =
     activeTab === "my-reports"
-      ? allUserReports
+      ? allUserReports.filter((report) => {
+          if (statusFilter === "all") return true;
+          return report.status === statusFilter;
+        })
       : mockReports.filter((report) => upvotedReportIds.includes(report.id));
 
   const handleUpvote = (reportId: string) => {
@@ -141,6 +154,55 @@ export default function ProfilePage() {
     console.log(`Report ${reportId} marked as resolved`);
   };
 
+  const handleEditClick = (reportId: string) => {
+    const report = allUserReports.find((r) => r.id === reportId);
+    if (report) {
+      setReportToEdit(report);
+      setShowEditReportDialog(true);
+    }
+  };
+
+  const handleEditSubmit = (updatedReport: Report) => {
+    // Update report in allUserReports
+    setAllUserReports((prev) =>
+      prev.map((r) => (r.id === updatedReport.id ? updatedReport : r))
+    );
+
+    setShowEditReportDialog(false);
+    setReportToEdit(null);
+
+    // Show success message
+    console.log(`Report ${updatedReport.id} updated successfully`);
+  };
+
+  const handleDeleteClick = (reportId: string) => {
+    const report = allUserReports.find((r) => r.id === reportId);
+    if (report) {
+      setReportToDelete(report);
+      setShowDeleteDialog(true);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (reportToDelete) {
+      // Remove from allUserReports
+      setAllUserReports((prev) =>
+        prev.filter((r) => r.id !== reportToDelete.id)
+      );
+
+      // Also remove from upvotedReportIds if present
+      setUpvotedReportIds((prev) =>
+        prev.filter((id) => id !== reportToDelete.id)
+      );
+
+      setReportToDelete(null);
+      setShowDeleteDialog(false);
+
+      // Show success message
+      console.log(`Report ${reportToDelete.id} deleted successfully`);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f2f2ed]">
       {/* Navbar */}
@@ -197,6 +259,21 @@ export default function ProfilePage() {
               />
             )}
 
+            {/* Status Filter - Only show on "my-reports" tab */}
+            {!isLoading && activeTab === "my-reports" && (
+              <StatusFilter
+                selectedStatus={statusFilter}
+                onStatusChange={setStatusFilter}
+                reportCounts={{
+                  all: allUserReports.length,
+                  pending: allUserReports.filter((r) => r.status === "pending")
+                    .length,
+                  resolved: allUserReports.filter((r) => r.status === "resolved")
+                    .length,
+                }}
+              />
+            )}
+
             {/* User Reports */}
             <UserReports
               reports={displayedReports}
@@ -212,6 +289,13 @@ export default function ProfilePage() {
                 activeTab === "my-reports" ? handleValidateReport : undefined
               }
               isOwner={activeTab === "my-reports"}
+              onEditReport={
+                activeTab === "my-reports" ? handleEditClick : undefined
+              }
+              onDeleteReport={
+                activeTab === "my-reports" ? handleDeleteClick : undefined
+              }
+              statusFilter={activeTab === "my-reports" ? statusFilter : undefined}
             />
           </ErrorBoundary>
         </div>
@@ -248,6 +332,28 @@ export default function ProfilePage() {
         isUpvoted={
           selectedReport ? upvotedReportIds.includes(selectedReport.id) : false
         }
+      />
+
+      {/* Edit Report Dialog */}
+      <EditReportDialog
+        open={showEditReportDialog}
+        onClose={() => {
+          setShowEditReportDialog(false);
+          setReportToEdit(null);
+        }}
+        report={reportToEdit}
+        onSubmit={handleEditSubmit}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
+        onClose={() => {
+          setShowDeleteDialog(false);
+          setReportToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        report={reportToDelete}
       />
     </div>
   );

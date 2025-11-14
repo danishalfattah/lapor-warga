@@ -40,7 +40,7 @@ export function Hero({ onNavigateToMap }: HeroProps) {
             }}
             className="text-white mb-4 sm:mb-6 inter-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
           >
-            Lihat Laporan. Buat Perubahan.
+            Suara Anda, Perubahan Nyata
           </motion.h1>
 
           {/* Subtitle */}
@@ -54,8 +54,9 @@ export function Hero({ onNavigateToMap }: HeroProps) {
             }}
             className="text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-base sm:text-lg"
           >
-            Platform pelaporan warga real-time se-Indonesia. Laporkan masalah,
-            beri upvote, dan pantau penyelesaiannya secara transparan.
+            Platform civic engagement yang menghubungkan warga dengan solusi nyata.
+            Laporkan masalah di lingkungan Anda, pantau progressnya, dan lihat dampak
+            nyata dari kontribusi Anda.
           </motion.p>
 
           {/* CTA Button */}

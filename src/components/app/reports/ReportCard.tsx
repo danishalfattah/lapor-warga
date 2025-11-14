@@ -1,4 +1,4 @@
-import { ArrowBigUp, MapPin, Tag } from "lucide-react";
+import { ArrowBigUp, MapPin, Tag, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/components/shared/ImageWithFallback";
 import StatusBadge from "@/components/shared/StatusBadge";
@@ -12,6 +12,9 @@ interface ReportCardProps {
   isLoggedIn: boolean;
   isHovered: boolean;
   isUpvoted?: boolean;
+  showActions?: boolean;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 const categoryLabels = {
@@ -30,6 +33,9 @@ export function ReportCard({
   isLoggedIn,
   isHovered,
   isUpvoted = false,
+  showActions = false,
+  onEdit,
+  onDelete,
 }: ReportCardProps) {
   return (
     <div
@@ -115,9 +121,40 @@ export function ReportCard({
             <span className="inter-semibold text-sm">{report.upvotes}</span>
           </Button>
 
-          <span className="text-xs text-gray-400">
-            oleh {report.reporterName}
-          </span>
+          {showActions && onEdit && onDelete ? (
+            <div className="flex gap-1.5">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(report.id);
+                }}
+                className="h-8 px-2 text-gray-600 hover:text-[#FACC15] hover:bg-[#FACC15]/10 cursor-pointer transition-colors"
+                aria-label={`Edit laporan ${report.title}`}
+              >
+                <Pencil className="w-4 h-4" />
+                <span className="ml-1 hidden sm:inline text-xs">Edit</span>
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(report.id);
+                }}
+                className="h-8 px-2 text-gray-600 hover:text-red-500 hover:bg-red-50 cursor-pointer transition-colors"
+                aria-label={`Hapus laporan ${report.title}`}
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="ml-1 hidden sm:inline text-xs">Hapus</span>
+              </Button>
+            </div>
+          ) : (
+            <span className="text-xs text-gray-400">
+              oleh {report.reporterName}
+            </span>
+          )}
         </div>
       </div>
     </div>

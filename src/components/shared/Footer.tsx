@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Facebook, Twitter, Instagram, Heart } from "lucide-react";
 import { Logo } from "./Logo";
 
@@ -15,15 +16,15 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
             {/* Left: Logo & Tagline */}
             <div className="flex flex-col items-center md:items-start gap-6">
-              <div className="bg-[#2c2c21] rounded-2xl px-6 py-4 shadow-md border border-[#2c2c21]">
+              <Link href="/" className="cursor-pointer transition-opacity hover:opacity-80">
                 <Logo height={56} />
-              </div>
+              </Link>
               <div className="space-y-3">
                 <p className="text-[#342e19] inter-semibold text-center md:text-left">
-                  Suara Rakyat, Aksi Nyata
+                  Suara Anda, Perubahan Nyata
                 </p>
                 <p className="text-[#8a7b42] text-sm text-center md:text-left max-w-xs">
-                  Platform pelaporan warga real-time se-Indonesia
+                  Platform civic engagement yang menghubungkan warga dengan solusi nyata
                 </p>
               </div>
             </div>

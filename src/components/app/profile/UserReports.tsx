@@ -18,6 +18,9 @@ interface UserReportsProps {
   onCreateReport?: () => void;
   onValidateReport?: (id: string) => void;
   isOwner?: boolean; // Apakah ini laporan milik user sendiri
+  onEditReport?: (id: string) => void;
+  onDeleteReport?: (id: string) => void;
+  statusFilter?: "all" | "pending" | "resolved";
 }
 
 export default function UserReports({
@@ -30,6 +33,9 @@ export default function UserReports({
   onCreateReport,
   onValidateReport,
   isOwner = false,
+  onEditReport,
+  onDeleteReport,
+  statusFilter,
 }: UserReportsProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [reportToValidate, setReportToValidate] = useState<Report | null>(null);
@@ -63,8 +69,32 @@ export default function UserReports({
     );
   }
 
-  // Empty state
+  // Empty state with dynamic messages based on filter
   if (reports.length === 0) {
+    const getEmptyStateContent = () => {
+      if (statusFilter === "resolved") {
+        return {
+          title: "Belum Ada Laporan Selesai",
+          description:
+            "Anda belum memiliki laporan yang sudah diselesaikan. Laporan yang sudah ditandai selesai akan muncul di sini.",
+        };
+      }
+      if (statusFilter === "pending") {
+        return {
+          title: "Belum Ada Laporan ",
+          description:
+            "Semua laporan Anda sudah diselesaikan. Laporan baru yang belum diselesaikan akan muncul di sini.",
+        };
+      }
+      return {
+        title: "Belum Ada Laporan",
+        description:
+          "Anda belum membuat laporan apapun. Mulai berkontribusi dengan membuat laporan tentang masalah di lingkungan sekitar Anda.",
+      };
+    };
+
+    const emptyContent = getEmptyStateContent();
+
     return (
       <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-6">
@@ -79,23 +109,24 @@ export default function UserReports({
           </div>
 
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Belum Ada Laporan
+            {emptyContent.title}
           </h3>
 
           <p className="text-sm text-gray-600 text-center max-w-md mb-6">
-            Anda belum membuat laporan apapun. Mulai berkontribusi dengan membuat
-            laporan tentang masalah di lingkungan sekitar Anda.
+            {emptyContent.description}
           </p>
 
-          {onCreateReport && (
-            <Button
-              onClick={onCreateReport}
-              className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#2c2c21] font-semibold"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Buat Laporan Pertama
-            </Button>
-          )}
+          {onCreateReport &&
+            statusFilter !== "resolved" &&
+            statusFilter !== "pending" && (
+              <Button
+                onClick={onCreateReport}
+                className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#2c2c21] font-semibold"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Buat Laporan Pertama
+              </Button>
+            )}
         </div>
       </div>
     );
@@ -134,6 +165,9 @@ export default function UserReports({
               isLoggedIn={isLoggedIn}
               isHovered={false}
               isUpvoted={upvotedReportIds.includes(report.id)}
+              showActions={isOwner}
+              onEdit={onEditReport}
+              onDelete={onDeleteReport}
             />
             {/* Validate Button - Only show for owner's pending reports */}
             {isOwner && onValidateReport && report.status === "pending" && (

@@ -63,21 +63,21 @@ export default function ProfileStats({
         return (
           <div
             key={index}
-            className="group rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-gray-200"
+            className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-gray-200"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div
-                className={`${stat.bgColor} p-3 rounded-xl transition-transform duration-300 group-hover:scale-110`}
-              >
-                <Icon className={`h-6 w-6 ${stat.iconColor}`} />
+            {/* Main Content */}
+            <div className="relative z-10">
+              <div className={`text-4xl font-bold ${stat.color} mb-2 inter-semibold`}>
+                {stat.value.toLocaleString("id-ID")}
               </div>
+
+              <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
             </div>
 
-            <div className={`text-4xl font-bold ${stat.color} mb-2 inter-semibold`}>
-              {stat.value.toLocaleString("id-ID")}
+            {/* Large Background Icon - Bottom Right */}
+            <div className="absolute bottom-3 right-3 opacity-20 transition-all duration-300 group-hover:opacity-30 group-hover:scale-110">
+              <Icon className={`h-20 w-20 ${stat.iconColor}`} />
             </div>
-
-            <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
           </div>
         );
       })}
