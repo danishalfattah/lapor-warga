@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Settings } from "lucide-react";
+import { Settings, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MapNavbar } from "@/components/app/reports/MapNavbar";
 import ProfileHeader from "@/components/app/profile/ProfileHeader";
@@ -21,7 +21,9 @@ import type { Report } from "@/types/report";
 export default function ProfilePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"my-reports" | "upvoted">("my-reports");
+  const [activeTab, setActiveTab] = useState<"my-reports" | "upvoted">(
+    "my-reports"
+  );
   const [allUserReports, setAllUserReports] = useState<Report[]>([]);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -60,9 +62,10 @@ export default function ProfilePage() {
   }, [userData.id]);
 
   // Get reports based on active tab
-  const displayedReports = activeTab === "my-reports"
-    ? allUserReports
-    : mockReports.filter((report) => upvotedReportIds.includes(report.id));
+  const displayedReports =
+    activeTab === "my-reports"
+      ? allUserReports
+      : mockReports.filter((report) => upvotedReportIds.includes(report.id));
 
   const handleUpvote = (reportId: string) => {
     if (!isLoggedIn) {
@@ -104,9 +107,10 @@ export default function ProfilePage() {
   };
 
   const handleReportClick = (reportId: string) => {
-    const report = activeTab === "my-reports"
-      ? allUserReports.find((r) => r.id === reportId)
-      : mockReports.find((r) => r.id === reportId);
+    const report =
+      activeTab === "my-reports"
+        ? allUserReports.find((r) => r.id === reportId)
+        : mockReports.find((r) => r.id === reportId);
 
     if (report) {
       setSelectedReport(report);
@@ -154,6 +158,16 @@ export default function ProfilePage() {
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <ErrorBoundary>
+            {/* Back Navigation */}
+            <Button
+              onClick={() => router.back()}
+              variant="ghost"
+              className="mb-4 gap-2 text-[#2c2c21] cursor-pointer "
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Kembali
+            </Button>
+
             {/* Profile Header with Edit Button */}
             <div className="relative">
               <ProfileHeader user={userData} isLoading={isLoading} />
@@ -191,8 +205,12 @@ export default function ProfilePage() {
               isLoggedIn={isLoggedIn}
               upvotedReportIds={upvotedReportIds}
               isLoading={isLoading}
-              onCreateReport={activeTab === "my-reports" ? handleCreateReport : undefined}
-              onValidateReport={activeTab === "my-reports" ? handleValidateReport : undefined}
+              onCreateReport={
+                activeTab === "my-reports" ? handleCreateReport : undefined
+              }
+              onValidateReport={
+                activeTab === "my-reports" ? handleValidateReport : undefined
+              }
               isOwner={activeTab === "my-reports"}
             />
           </ErrorBoundary>

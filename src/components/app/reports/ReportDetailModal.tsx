@@ -81,7 +81,7 @@ export function ReportDetailModal({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+          className="absolute top-4 right-4 z-20 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors cursor-pointer"
           aria-label="Tutup"
         >
           <X className="w-5 h-5" />
@@ -100,14 +100,14 @@ export function ReportDetailModal({
             <>
               <button
                 onClick={handlePrevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors cursor-pointer"
                 aria-label="Gambar sebelumnya"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={handleNextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 rounded-full p-2 hover:bg-white shadow-lg transition-colors cursor-pointer"
                 aria-label="Gambar berikutnya"
               >
                 <ChevronRight className="w-5 h-5" />

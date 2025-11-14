@@ -132,7 +132,7 @@ export function MapSidebar({
       {isCollapsed && (
         <button
           onClick={() => setIsCollapsed(false)}
-          className="fixed left-4 top-20 p-2.5 rounded-lg bg-white shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-300 z-50"
+          className="fixed left-4 top-20 p-2.5 rounded-lg bg-white shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-300 z-50 cursor-pointer"
           aria-label="Expand sidebar"
         >
           <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -161,7 +161,7 @@ export function MapSidebar({
               <h2 className="inter-semibold text-[#2c2c21]">Laporan Warga</h2>
               <button
                 onClick={() => setIsCollapsed(true)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 aria-label="Collapse sidebar"
               >
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
