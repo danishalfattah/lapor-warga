@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, useSpring, useTransform } from "motion/react";
-import { mockReports } from "../../lib/mockData";
+import { mockReports, PROVINCES_DATA } from "../../data/mockReports";
 import { FileText, Clock, CheckCircle2 } from "lucide-react";
 import {
   Select,
@@ -71,16 +71,9 @@ export function Statistics() {
   // Get available cities based on selected province
   const getAvailableCities = () => {
     if (selectedProvince === "all") {
-      return ["all", ...new Set(mockReports.map((r) => r.city))];
+      return [];
     }
-    return [
-      "all",
-      ...new Set(
-        mockReports
-          .filter((r) => r.province === selectedProvince)
-          .map((r) => r.city)
-      ),
-    ];
+    return PROVINCES_DATA[selectedProvince] || [];
   };
 
   return (
@@ -153,11 +146,11 @@ export function Statistics() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">🇮🇩 Seluruh Indonesia</SelectItem>
-                  <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
-                  <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
-                  <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
-                  <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
-                  <SelectItem value="DI Yogyakarta">DI Yogyakarta</SelectItem>
+                  {Object.keys(PROVINCES_DATA).map((province) => (
+                    <SelectItem key={province} value={province}>
+                      {province}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -172,9 +165,10 @@ export function Statistics() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">📍 Semua Kota</SelectItem>
                   {getAvailableCities().map((city) => (
                     <SelectItem key={city} value={city}>
-                      {city === "all" ? "📍 Semua Kota" : city}
+                      {city}
                     </SelectItem>
                   ))}
                 </SelectContent>

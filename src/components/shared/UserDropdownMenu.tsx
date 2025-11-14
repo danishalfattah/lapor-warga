@@ -43,7 +43,7 @@ export function UserDropdownMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="relative flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2 transition-all hover:ring-2 hover:ring-[#FACC15]/50"
+          className="relative flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2 transition-all hover:ring-2 hover:ring-[#FACC15]/50 cursor-pointer"
           aria-label="User menu"
         >
           <UserAvatar name={user.name} size="sm" />

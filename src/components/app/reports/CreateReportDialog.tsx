@@ -35,6 +35,14 @@ const cityByProvince: Record<string, string[]> = {
     "Jakarta Timur",
     "Kepulauan Seribu",
   ],
+  "Banten": [
+    "Tangerang",
+    "Tangerang Selatan",
+    "Serang",
+    "Cilegon",
+    "Pandeglang",
+    "Lebak",
+  ],
   "Jawa Barat": [
     "Bandung",
     "Bogor",
@@ -236,6 +244,7 @@ export function CreateReportDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
+                  <SelectItem value="Banten">Banten</SelectItem>
                   <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
                   <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
                   <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
@@ -323,7 +332,7 @@ export function CreateReportDialog({
                 <button
                   type="button"
                   onClick={() => removeImage(0)}
-                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1.5 text-white shadow-lg hover:bg-red-600 transition-colors"
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1.5 text-white shadow-lg hover:bg-red-600 transition-colors cursor-pointer"
                   aria-label="Hapus foto"
                 >
                   <X className="w-4 h-4" />
@@ -333,7 +342,7 @@ export function CreateReportDialog({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-video max-w-md mx-auto rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-[#FACC15] transition-all flex flex-col items-center justify-center gap-2"
+                className="w-full aspect-video max-w-md mx-auto rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-[#FACC15] transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
               >
                 <Camera className="w-12 h-12 text-gray-400" />
                 <div className="text-center">

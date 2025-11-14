@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { mockReports } from "../../lib/mockData";
+import { PROVINCES_DATA } from "../../data/mockReports";
+import { getTopLeaderboard, type LeaderboardUser } from "../../data/mockLeaderboard";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Trophy, Medal, Award } from "lucide-react";
 import {
@@ -13,71 +14,26 @@ import {
   SelectValue,
 } from "../ui/select";
 
-interface LeaderboardUser {
-  id: string;
-  name: string;
-  avatar: string;
-  reportCount: number;
-  rank: number;
-  province: string;
-  city: string;
-}
-
 export function LeaderboardSection() {
   const [selectedProvince, setSelectedProvince] = useState("all");
   const [selectedCity, setSelectedCity] = useState("all");
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
 
-  // Generate leaderboard data based on filters
+  // Get leaderboard data based on filters
   useEffect(() => {
-    // Create mock leaderboard users from reports
-    const userMap = new Map<string, LeaderboardUser>();
+    const province = selectedProvince === "all" ? undefined : selectedProvince;
+    const city = selectedCity === "all" ? undefined : selectedCity;
 
-    mockReports.forEach((report) => {
-      // Apply filters
-      if (selectedProvince !== "all" && report.province !== selectedProvince)
-        return;
-      if (selectedCity !== "all" && report.city !== selectedCity) return;
-
-      if (!userMap.has(report.reporterName)) {
-        userMap.set(report.reporterName, {
-          id: report.reporterName,
-          name: report.reporterName,
-          avatar: report.reporterAvatar,
-          reportCount: 0,
-          rank: 0,
-          province: report.province,
-          city: report.city,
-        });
-      }
-
-      const user = userMap.get(report.reporterName)!;
-      user.reportCount += Math.floor(Math.random() * 8) + 12; // Random count for variety
-    });
-
-    // Convert to array and sort by report count
-    const sortedUsers = Array.from(userMap.values())
-      .sort((a, b) => b.reportCount - a.reportCount)
-      .slice(0, 24)
-      .map((user, index) => ({ ...user, rank: index + 1 }));
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLeaderboard(sortedUsers);
+    const topUsers = getTopLeaderboard(24, province, city);
+    setLeaderboard(topUsers);
   }, [selectedProvince, selectedCity]);
 
   // Get available cities based on selected province
   const getAvailableCities = () => {
     if (selectedProvince === "all") {
-      return ["all", ...new Set(mockReports.map((r) => r.city))];
+      return [];
     }
-    return [
-      "all",
-      ...new Set(
-        mockReports
-          .filter((r) => r.province === selectedProvince)
-          .map((r) => r.city)
-      ),
-    ];
+    return PROVINCES_DATA[selectedProvince] || [];
   };
 
   const getRankStyle = (rank: number) => {
@@ -176,11 +132,11 @@ export function LeaderboardSection() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">🇮🇩 Seluruh Indonesia</SelectItem>
-                  <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
-                  <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
-                  <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
-                  <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
-                  <SelectItem value="DI Yogyakarta">DI Yogyakarta</SelectItem>
+                  {Object.keys(PROVINCES_DATA).map((province) => (
+                    <SelectItem key={province} value={province}>
+                      {province}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -195,9 +151,10 @@ export function LeaderboardSection() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">📍 Semua Kota</SelectItem>
                   {getAvailableCities().map((city) => (
                     <SelectItem key={city} value={city}>
-                      {city === "all" ? "📍 Semua Kota" : city}
+                      {city}
                     </SelectItem>
                   ))}
                 </SelectContent>

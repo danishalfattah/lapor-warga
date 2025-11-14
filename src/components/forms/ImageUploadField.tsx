@@ -36,7 +36,7 @@ export default function ImageUploadField({ images, setImages }: ImageUploadField
             <button
               type="button"
               onClick={() => removeImage(index)}
-              className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white"
+              className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white cursor-pointer"
             >
               ✕
             </button>
@@ -47,7 +47,7 @@ export default function ImageUploadField({ images, setImages }: ImageUploadField
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="aspect-square rounded-lg border-2 border-dashed border-dark-brown/20 bg-dark-brown/5 transition hover:bg-dark-brown/10"
+            className="aspect-square rounded-lg border-2 border-dashed border-dark-brown/20 bg-dark-brown/5 transition hover:bg-dark-brown/10 cursor-pointer"
           >
             <span className="text-2xl text-dark-brown/50">+</span>
           </button>
