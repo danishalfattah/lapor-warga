@@ -50,6 +50,16 @@ export default function ProfilePage() {
   // Mock authentication - always logged in
   const isLoggedIn = true;
 
+  // Auto-populate demo upvoted reports (for demo/presentation purposes)
+  useEffect(() => {
+    // Only populate if empty - prevents overwriting user's actual upvotes
+    if (upvotedReportIds.length === 0) {
+      // Select reports NOT created by current user (reports from others)
+      const demoUpvotedIds = ["3", "4", "5", "6"];
+      setUpvotedReportIds(demoUpvotedIds);
+    }
+  }, []); // Run only once on mount
+
   // Simulate initial loading
   useEffect(() => {
     const timer = setTimeout(() => {

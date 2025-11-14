@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
 ): [T, (value: T | ((val: T) => T)) => void] {
+  // Track if component is mounted (client-side)
+  const [isMounted, setIsMounted] = useState(false);
+
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -18,6 +21,26 @@ export function useLocalStorage<T>(
       return initialValue;
     }
   });
+
+  // Set mounted flag after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Re-read localStorage after hydration to fix SSR mismatch
+  useEffect(() => {
+    if (!isMounted) return;
+
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        const parsedItem = JSON.parse(item);
+        setStoredValue(parsedItem);
+      }
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}" after hydration:`, error);
+    }
+  }, [isMounted, key]);
 
   // Return a wrapped version of useState's setter function that
   // persists the new value to localStorage.

@@ -3,16 +3,16 @@ import type { User, UserStats } from '@/types/user';
 
 export const mockUsers: (User & { stats: UserStats })[] = [
   {
-    id: 'user1',
+    id: 'user-1',
     email: 'budi.santoso@email.com',
     name: 'Budi Santoso',
     avatar: undefined,
     createdAt: '2023-12-01T00:00:00Z',
     updatedAt: '2024-01-15T08:30:00Z',
     stats: {
-      totalReports: 23,
-      resolvedReports: 15,
-      totalUpvotes: 456,
+      totalReports: 5,
+      resolvedReports: 1,
+      totalUpvotes: 763,
     },
   },
   {
