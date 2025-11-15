@@ -11,7 +11,6 @@ import UserReports from "@/components/app/profile/UserReports";
 import { ProfileTabs } from "@/components/app/profile/ProfileTabs";
 import { EditProfileDialog } from "@/components/app/profile/EditProfileDialog";
 import { CreateReportDialog } from "@/components/app/reports/CreateReportDialog";
-import { EditReportDialog } from "@/components/app/reports/EditReportDialog";
 import { ReportDetailModal } from "@/components/app/reports/ReportDetailModal";
 import { StatusFilter } from "@/components/app/profile/StatusFilter";
 import { DeleteConfirmDialog } from "@/components/app/profile/DeleteConfirmDialog";
@@ -34,10 +33,8 @@ export default function ProfilePage() {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [userData, setUserData] = useState(mockCurrentUser);
 
-  // New states for Edit/Delete/Filter features
+  // New states for Delete/Filter features
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "resolved">("all");
-  const [showEditReportDialog, setShowEditReportDialog] = useState(false);
-  const [reportToEdit, setReportToEdit] = useState<Report | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
 
@@ -164,27 +161,6 @@ export default function ProfilePage() {
     console.log(`Report ${reportId} marked as resolved`);
   };
 
-  const handleEditClick = (reportId: string) => {
-    const report = allUserReports.find((r) => r.id === reportId);
-    if (report) {
-      setReportToEdit(report);
-      setShowEditReportDialog(true);
-    }
-  };
-
-  const handleEditSubmit = (updatedReport: Report) => {
-    // Update report in allUserReports
-    setAllUserReports((prev) =>
-      prev.map((r) => (r.id === updatedReport.id ? updatedReport : r))
-    );
-
-    setShowEditReportDialog(false);
-    setReportToEdit(null);
-
-    // Show success message
-    console.log(`Report ${updatedReport.id} updated successfully`);
-  };
-
   const handleDeleteClick = (reportId: string) => {
     const report = allUserReports.find((r) => r.id === reportId);
     if (report) {
@@ -299,9 +275,6 @@ export default function ProfilePage() {
                 activeTab === "my-reports" ? handleValidateReport : undefined
               }
               isOwner={activeTab === "my-reports"}
-              onEditReport={
-                activeTab === "my-reports" ? handleEditClick : undefined
-              }
               onDeleteReport={
                 activeTab === "my-reports" ? handleDeleteClick : undefined
               }
@@ -342,17 +315,6 @@ export default function ProfilePage() {
         isUpvoted={
           selectedReport ? upvotedReportIds.includes(selectedReport.id) : false
         }
-      />
-
-      {/* Edit Report Dialog */}
-      <EditReportDialog
-        open={showEditReportDialog}
-        onClose={() => {
-          setShowEditReportDialog(false);
-          setReportToEdit(null);
-        }}
-        report={reportToEdit}
-        onSubmit={handleEditSubmit}
       />
 
       {/* Delete Confirmation Dialog */}

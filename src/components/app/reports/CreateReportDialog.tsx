@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
-import { X, MapPin, Camera } from "lucide-react";
+import { X, Camera, Navigation, Map as MapIcon, CheckCircle2 } from "lucide-react";
+import { Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import { reverseGeocode } from "@/lib/google-maps/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,59 +27,6 @@ interface CreateReportDialogProps {
   onSubmit: (report: Report) => void;
 }
 
-// Mock data for cities based on province
-const cityByProvince: Record<string, string[]> = {
-  "DKI Jakarta": [
-    "Jakarta Pusat",
-    "Jakarta Utara",
-    "Jakarta Barat",
-    "Jakarta Selatan",
-    "Jakarta Timur",
-    "Kepulauan Seribu",
-  ],
-  "Banten": [
-    "Tangerang",
-    "Tangerang Selatan",
-    "Serang",
-    "Cilegon",
-    "Pandeglang",
-    "Lebak",
-  ],
-  "Jawa Barat": [
-    "Bandung",
-    "Bogor",
-    "Depok",
-    "Bekasi",
-    "Cimahi",
-    "Sukabumi",
-    "Cirebon",
-    "Tasikmalaya",
-  ],
-  "Jawa Tengah": [
-    "Semarang",
-    "Surakarta",
-    "Magelang",
-    "Salatiga",
-    "Pekalongan",
-    "Tegal",
-  ],
-  "Jawa Timur": [
-    "Surabaya",
-    "Malang",
-    "Kediri",
-    "Mojokerto",
-    "Madiun",
-    "Blitar",
-    "Pasuruan",
-  ],
-  "DI Yogyakarta": [
-    "Yogyakarta",
-    "Sleman",
-    "Bantul",
-    "Kulon Progo",
-    "Gunung Kidul",
-  ],
-};
 
 export function CreateReportDialog({
   open,
@@ -87,15 +36,16 @@ export function CreateReportDialog({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<Report["category"]>("lainnya");
-  const [location, setLocation] = useState("");
   const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [province, setProvince] = useState("");
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Get cities for selected province
-  const availableCities = province ? cityByProvince[province] || [] : [];
+  // Location states for GPS & Map
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [showMapPicker, setShowMapPicker] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -108,10 +58,54 @@ export function CreateReportDialog({
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Reset city when province changes
-  const handleProvinceChange = (value: string) => {
-    setProvince(value);
-    setCity(""); // Reset city selection
+  // GPS: Get current location
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("GPS tidak tersedia di browser Anda");
+      return;
+    }
+
+    setIsGettingLocation(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        setLatitude(lat);
+        setLongitude(lng);
+        setIsGettingLocation(false);
+
+        // Reverse geocode to get human-readable address
+        const formattedAddress = await reverseGeocode(lat, lng);
+        if (formattedAddress) {
+          setAddress(formattedAddress);
+        }
+      },
+      (error) => {
+        setIsGettingLocation(false);
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError("Izin lokasi ditolak. Silakan pilih lokasi di peta.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Informasi lokasi tidak tersedia.");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Waktu permintaan lokasi habis. Coba lagi.");
+            break;
+          default:
+            setLocationError("Gagal mendapatkan lokasi. Pastikan GPS aktif.");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -123,12 +117,12 @@ export function CreateReportDialog({
       description,
       category,
       status: "pending",
-      province,
-      city,
+      province: "",
+      city: "",
       address,
-      location,
-      latitude: -6.2 + Math.random() * 2,
-      longitude: 106.8 + Math.random() * 2,
+      location: "",
+      latitude: latitude || -6.2088, // Use GPS/Map or default Jakarta
+      longitude: longitude || 106.8228,
       images: [
         "https://images.unsplash.com/photo-1709934730506-fba12664d4e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW1hZ2VkJTIwcm9hZCUyMHBvdGhvbGV8ZW58MXx8fHwxNzYxOTgxMTA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       ],
@@ -148,11 +142,12 @@ export function CreateReportDialog({
     setTitle("");
     setDescription("");
     setCategory("lainnya");
-    setLocation("");
     setAddress("");
-    setCity("");
-    setProvince("");
     setUploadedImages([]);
+    setLatitude(null);
+    setLongitude(null);
+    setLocationError(null);
+    setShowMapPicker(false);
   };
 
   return (
@@ -229,73 +224,7 @@ export function CreateReportDialog({
             </Select>
           </div>
 
-          {/* Location */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label
-                htmlFor="province"
-                className="text-sm font-semibold text-gray-700"
-              >
-                Provinsi
-              </Label>
-              <Select value={province} onValueChange={handleProvinceChange}>
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Pilih provinsi" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
-                  <SelectItem value="Banten">Banten</SelectItem>
-                  <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
-                  <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
-                  <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
-                  <SelectItem value="DI Yogyakarta">DI Yogyakarta</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="city"
-                className="text-sm font-semibold text-gray-700"
-              >
-                Kota/Kabupaten
-              </Label>
-              <Select
-                value={city}
-                onValueChange={setCity}
-                disabled={!province || availableCities.length === 0}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder={!province ? "Pilih provinsi dulu" : "Pilih kota"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableCities.map((cityName) => (
-                    <SelectItem key={cityName} value={cityName}>
-                      {cityName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label
-              htmlFor="location"
-              className="text-sm font-semibold text-gray-700"
-            >
-              Lokasi Singkat
-            </Label>
-            <Input
-              id="location"
-              placeholder="Contoh: Tanah Abang"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="bg-white"
-              required
-            />
-          </div>
-
+          {/* Address */}
           <div className="space-y-2">
             <Label
               htmlFor="address"
@@ -303,17 +232,146 @@ export function CreateReportDialog({
             >
               Alamat Lengkap
             </Label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <Input
-                id="address"
-                placeholder="Contoh: Jl. Merdeka No. 45"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="pl-10 bg-white"
-                required
-              />
+            <Input
+              id="address"
+              placeholder="Contoh: Jl. Sudirman No. 123, Jakarta Pusat"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="bg-white"
+              required
+            />
+          </div>
+
+          {/* GPS Location Picker */}
+          <div className="space-y-3 pt-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              Koordinat Lokasi
+            </Label>
+
+            {/* GPS & Map Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                type="button"
+                onClick={handleUseCurrentLocation}
+                disabled={isGettingLocation}
+                variant="outline"
+                className="w-full"
+              >
+                {isGettingLocation ? (
+                  <>
+                    <span className="animate-spin mr-2">⏳</span>
+                    Mencari...
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-4 h-4 mr-2" />
+                    Gunakan Lokasi Saya
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => setShowMapPicker(!showMapPicker)}
+                variant="outline"
+                className="w-full"
+              >
+                <MapIcon className="w-4 h-4 mr-2" />
+                {showMapPicker ? "Sembunyikan" : "Pilih di"} Peta
+              </Button>
             </div>
+
+            {/* Error Message */}
+            {locationError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+                <X className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <span className="text-sm text-red-800">{locationError}</span>
+              </div>
+            )}
+
+            {/* Success: Show Address */}
+            {latitude && longitude && address && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-green-800 font-medium">
+                    Lokasi dipilih
+                  </p>
+                  <p className="text-xs text-green-700">
+                    {address}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Interactive Map Picker */}
+            {showMapPicker && (
+              <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
+                <div className="h-64 sm:h-80 w-full relative">
+                  <Map
+                    mapId="laporwarga_map_create"
+                    defaultCenter={{
+                      lat: latitude || -6.2088,
+                      lng: longitude || 106.8228,
+                    }}
+                    defaultZoom={15}
+                    gestureHandling="greedy"
+                    disableDefaultUI={true}
+                    onClick={async (e) => {
+                      if (e.detail.latLng) {
+                        const lat = e.detail.latLng.lat;
+                        const lng = e.detail.latLng.lng;
+
+                        setLatitude(lat);
+                        setLongitude(lng);
+                        setLocationError(null);
+
+                        // Reverse geocode to get address
+                        const formattedAddress = await reverseGeocode(lat, lng);
+                        if (formattedAddress) {
+                          setAddress(formattedAddress);
+                        }
+                      }
+                    }}
+                    className="h-full w-full"
+                  >
+                    {latitude && longitude && (
+                      <AdvancedMarker
+                        position={{ lat: latitude, lng: longitude }}
+                        draggable={true}
+                        onDragEnd={async (e) => {
+                          if (e.latLng) {
+                            // AdvancedMarker returns Google Maps LatLng object with lat() and lng() methods
+                            const lat = typeof e.latLng.lat === 'function' ? e.latLng.lat() : Number(e.latLng.lat);
+                            const lng = typeof e.latLng.lng === 'function' ? e.latLng.lng() : Number(e.latLng.lng);
+
+                            setLatitude(lat);
+                            setLongitude(lng);
+
+                            // Reverse geocode to get address
+                            const formattedAddress = await reverseGeocode(lat, lng);
+                            if (formattedAddress) {
+                              setAddress(formattedAddress);
+                            }
+                          }
+                        }}
+                      >
+                        <Pin
+                          background="#FACC15"
+                          borderColor="#FACC15"
+                          glyphColor="#2c2c21"
+                        />
+                      </AdvancedMarker>
+                    )}
+                  </Map>
+                </div>
+                <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-600 text-center">
+                    💡 Klik pada peta atau seret pin untuk memilih lokasi
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Photo Upload */}

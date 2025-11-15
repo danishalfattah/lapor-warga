@@ -148,7 +148,7 @@ export default function ReportPage() {
     });
 
   return (
-    <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={["visualization"]}>
+    <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={["visualization", "places"]}>
       <div className="h-screen flex flex-col">
         {/* Navbar - All devices */}
         <MapNavbar

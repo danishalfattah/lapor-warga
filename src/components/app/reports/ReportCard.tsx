@@ -47,7 +47,7 @@ export function ReportCard({
       aria-label={`Laporan: ${report.title}`}
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick(report.id);
         }
@@ -110,7 +110,11 @@ export function ReportCard({
                 ? "text-[#FACC15] bg-[#FACC15]/10 hover:bg-[#FACC15]/20 hover:scale-105 active:scale-95"
                 : "text-gray-600 hover:text-[#FACC15] hover:bg-[#FACC15]/10 hover:scale-105 active:scale-95"
             }`}
-            aria-label={isUpvoted ? `Batalkan upvote dari ${report.title}` : `Upvote ${report.title}`}
+            aria-label={
+              isUpvoted
+                ? `Batalkan upvote dari ${report.title}`
+                : `Upvote ${report.title}`
+            }
             disabled={!isLoggedIn}
           >
             <ArrowBigUp
@@ -121,34 +125,38 @@ export function ReportCard({
             <span className="inter-semibold text-sm">{report.upvotes}</span>
           </Button>
 
-          {showActions && onEdit && onDelete ? (
+          {showActions && (onEdit || onDelete) ? (
             <div className="flex gap-1.5">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(report.id);
-                }}
-                className="h-8 px-2 text-gray-600 hover:text-[#FACC15] hover:bg-[#FACC15]/10 cursor-pointer transition-colors"
-                aria-label={`Edit laporan ${report.title}`}
-              >
-                <Pencil className="w-4 h-4" />
-                <span className="ml-1 hidden sm:inline text-xs">Edit</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(report.id);
-                }}
-                className="h-8 px-2 text-gray-600 hover:text-red-500 hover:bg-red-50 cursor-pointer transition-colors"
-                aria-label={`Hapus laporan ${report.title}`}
-              >
-                <Trash2 className="w-4 h-4" />
-                <span className="ml-1 hidden sm:inline text-xs">Hapus</span>
-              </Button>
+              {onEdit && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(report.id);
+                  }}
+                  className="h-8 px-2 text-gray-600 hover:text-[#FACC15] hover:bg-[#FACC15]/10 cursor-pointer transition-colors"
+                  aria-label={`Edit laporan ${report.title}`}
+                >
+                  <Pencil className="w-4 h-4" />
+                  <span className="ml-1 hidden sm:inline text-xs">Edit</span>
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(report.id);
+                  }}
+                  className="h-8 px-2 text-gray-600 hover:text-red-500 hover:bg-red-50 cursor-pointer transition-colors"
+                  aria-label={`Hapus laporan ${report.title}`}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span className="ml-1 hidden sm:inline text-xs">Hapus</span>
+                </Button>
+              )}
             </div>
           ) : (
             <span className="text-xs text-gray-400">
