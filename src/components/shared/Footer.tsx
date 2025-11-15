@@ -108,7 +108,7 @@ export function Footer() {
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-[#b4a464] text-xs sm:text-sm">
-                © 2024 LaporWarga. Semua hak dilindungi.
+                © 2025 LaporWarga. Semua hak dilindungi.
               </p>
               <p className="text-[#b4a464] text-xs sm:text-sm flex items-center gap-1.5">
                 Dibuat dengan
